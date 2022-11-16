@@ -15,6 +15,3 @@ xgboost
 sklearn
 flask
 flask_restful
-scikit-learn
-scipy
-matplotlib
