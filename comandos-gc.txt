@@ -2,6 +2,7 @@ gcloud builds submit --tag gcr.io/sre-challenger/sre-challenge-gc --project=sre-
 -- construye la imagan en google cloud
 gcloud run deploy sre-challenge-gc --image gcr.io/sre-challenger/sre-challenge-gc --platform managed --port=5000 --project=sre-challenger --allow-unauthenticated --region us-central1
 -- ejecuta el deply en gcloud
---ejecuta deploy github
+--ejecuta deploy github 2
+
 
 
