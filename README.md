@@ -262,24 +262,250 @@ ejecutar
 
 ## a. ¿Cómo podrías mejorar el performance de las pruebas anteriores?
 
-A nivel de hardware se tiene la posibilidad de crecimiento vertical y horizontal 
-que son aumento de ram y procesador en el paradigma del crecimiento vertial o crear nuevas instancias en paralelo a medida crece las peticiones.
+A nivel de hardware se tiene la posibilidad de crecimiento vertical y horizontal.
+
+Que son aumento de ram y procesador en el crecimiento vertial o crear nuevas instancias en paralelo en el crecimiento horizontal.
 
 A nivel de software se podria utilizar otro lenguaje de programacion como es lua. o generar un binario de la app.
 
 
 
-4. El proceso de creación de infraestructura debe ser realizado con Terraform.
-5. ¿Cuáles serían los mecanismos ideales para que sólo sistemas autorizados puedan acceder a esta API?
+# 4. El proceso de creación de infraestructura debe ser realizado con Terraform.
+
+Se desplegara un cluster de kubernetes mediante terraform.
+
+Archivos terraform necesarios.
+
+main.tf
+```yaml
+provider "google" {
+  credentials = file("sre-challenger-deaf1565b69c.json")
+}
+
+module "gke_auth" {
+  source       = "terraform-google-modules/kubernetes-engine/google//modules/auth"
+  depends_on   = [module.gke]
+  project_id   = var.project_id
+  location     = module.gke.location
+  cluster_name = module.gke.name
+}
+
+resource "local_file" "kubeconfig" {
+  content  = module.gke_auth.kubeconfig_raw
+  filename = "kubeconfig-${var.env_name}"
+}
+
+
+
+module "gcp-network" {
+  source       = "terraform-google-modules/network/google"
+  project_id   = var.project_id
+  network_name = "${var.network}-${var.env_name}"
+  subnets = [
+    {
+      subnet_name   = "${var.subnetwork}-${var.env_name}"
+      subnet_ip     = "10.10.0.0/16"
+      subnet_region = var.region
+    },
+  ]
+  secondary_ranges = {
+    "${var.subnetwork}-${var.env_name}" = [
+      {
+        range_name    = var.ip_range_pods_name
+        ip_cidr_range = "10.20.0.0/16"
+      },
+      {
+        range_name    = var.ip_range_services_name
+        ip_cidr_range = "10.30.0.0/16"
+      },
+    ]
+  }
+}
+
+module "gke" {
+  source            = "terraform-google-modules/kubernetes-engine/google//modules/private-cluster"
+  project_id        = var.project_id
+  name              = "${var.cluster_name}-${var.env_name}"
+  regional          = false
+  region            = var.region
+  zones             = ["us-central1-c"]
+  network           = module.gcp-network.network_name
+  subnetwork        = module.gcp-network.subnets_names[0]
+  ip_range_pods     = var.ip_range_pods_name
+  ip_range_services = var.ip_range_services_name
+  node_pools = [
+    {
+      name           = "node-pool"
+      machine_type   = "n2-standard-2"
+      node_locations = "us-central1-c"
+      min_count      = var.minnode
+      max_count      = var.maxnode
+      disk_size_gb   = var.disksize
+      preemptible    = false
+      auto_repair    = false
+      auto_upgrade   = true
+    },
+  ]
+}
+output "cluster_name" {
+  description = "Cluster name"
+  value       = module.gke.name
+}
+```
+variables.tf
+```yaml
+variable "project_id" {
+  description = "The project ID of your project"
+  default = "sre-challenger"
+}
+variable "cluster_name" {
+  description = "The name for the GKE cluster"
+  default     = "gke-terraform-sre"
+}
+variable "env_name" {
+  description = "The environment for the GKE cluster"
+  default     = "challenger"
+}
+variable "region" {
+  description = "The region to host the cluster in"
+  default     = "us-central1"
+}
+variable "zones" {
+  description = "Cluster zone"
+  default     = "us-central1-c"
+}
+variable "network" {
+  description = "The VPC network created to host the cluster in"
+  default     = "gke-network"
+}
+variable "subnetwork" {
+  description = "The subnetwork created to host the cluster in"
+  default     = "gke-subnet"
+}
+variable "ip_range_pods_name" {
+  description = "The secondary ip range to use for pods"
+  default     = "ip-range-pods"
+}
+variable "ip_range_services_name" {
+  description = "The secondary ip range to use for services"
+  default     = "ip-range-services"
+}
+
+variable "service-account-id" {
+  description = "The ID of service account of GCP"
+  default     = "sre-challenger@sre-challenger.iam.gserviceaccount.com"
+}
+
+
+variable "cpus" {
+  description = "Number of cpus"
+  default     = "2"
+}
+
+variable "minnode" {
+  description = "Minimum number of node pool"
+  default     = 3
+}
+variable "maxnode" {
+  description = "Maximum number of node pool"
+  default     = 3
+}
+
+variable "disksize" {
+  description = "Disk Size in GB"
+  default     = 10
+}
+```
+Comandos para ejecutar la configuracion propuesta.
+```console
+terraform init
+terraform plan
+terraform apply
+```
+Cluster funcioando en GCP
+ ![alt text](https://github.com/flakor/challeger-sre/blob/master/blob/GKE.jpg?raw=true)
+ 
+ El siguiente paso es desplegar el cluster de kubernetes para esto se necesita crear un archivo de deployment, servicios y crear un secreto para traer la imagen de app publicada en dockerhub.
+ 
+ Comando para el secreto.
+ ```console
+ kubectl create secret docker-registry myregistrykey   --docker-server=$DOCKER_REGISTRY_SERVER   --docker-username=$DOCKER_USER   --docker-password=$DOCKER_PASSWORD   --docker-email=$DOCKER_EMAIL
+ ```
+ Archivo deployment
+ ```yml
+ apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sre-challenge-gc
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: sre-challenge-gc
+  template:
+    metadata:
+      labels:
+        app: sre-challenge-gc
+    spec:
+      containers:
+      - name: sre-challenge
+        image: flakor/challenger:v1  
+        resources:
+          requests:
+            memory: "1024Mi"
+            cpu: "1000m"
+          limits:
+            memory: "1024Mi"
+            cpu: "1000m"
+        ports:
+        - containerPort: 5000
+        env:
+          - name: PORT
+            value: "5000"
+      imagePullSecrets:
+      - name: gcr
+```
+archivo de servicio.
+```yml
+apiVersion: v1
+kind: Service
+metadata:
+  name: sre-challenge-gc
+  labels:
+    app: sre-challenge-gc
+spec:
+  ports:
+  - name: 5000-5000
+    port: 80
+    protocol: TCP
+    targetPort: 5000
+  selector:
+    app: sre-challenge-gc
+  type: LoadBalancer
+  # Replace the value with the IP address you reserved
+  loadBalancerIP: 34.136.109.140
+```
+
+
+
+ 
+
+
+
+# 5. ¿Cuáles serían los mecanismos ideales para que sólo sistemas autorizados puedan acceder a esta API?
 (NO es necesario implementarlo).
-a. ¿Este mecanismo agrega algún nivel de latencia al consumidor? ¿Por qué?
-6. ¿Cuáles serían los SLIs y SLOs que deﬁnirías y por qué?
-Consideraciones
-● Documentar MUY bien tu trabajo. Recomendamos utilizar un README o markdown donde puedas
-contar y dar a entender tus decisiones y supuestos. Recuerda que no estamos en tu cabeza!
-●      Criterios a considerar:
-○ Creatividad en las técnicas y/o herramientas utilizadas.
-○ Simplicidad y eﬁciencia.
-○ Performance.
-○ Calidad de conclusiones.
-○ Orden y documentación.
+
+Basic Authentication, API Key, OAuth 2.0.
+
+
+## a. ¿Este mecanismo agrega algún nivel de latencia al consumidor? ¿Por qué?
+Toda solucion de autoriacion de usuario agrega una latencia ya que es una capa intermedia en la app y el usuario ademas por la naturaleza de los sistemas de autorizacion se agregar funciones criptograficas los cuales tienen diferentes tipos de robustes y por lo tanto la latencia asociada.
+
+## 6. ¿Cuáles serían los SLIs y SLOs que deﬁnirías y por qué?.
+
+Como SLI se podria medir el tiempo de respuesta de la API.
+
+Como SLO podria ser que el tiempo de latencia que no sea menor que de las pruebas en local.
+
+
+
