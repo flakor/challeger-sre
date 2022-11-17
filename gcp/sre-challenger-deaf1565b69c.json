@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "sre-challenger",
+  "private_key_id": "deaf1565b69c17b02e69cd235f7309c9eb15a89c",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCiHCPsoFh6QEIf\ngyq1XPtf3UnDxyV4iecnakEXotaR+rEYrww0ktLQLsz/D/mTyLE8WX5umL6efWpB\n2LRLGYbAvZBx6WciFOIQegaKZD0ba3VGclZOGl0XD47TkRDPBxJnkf0Fvob1LfLF\n+dXU9I5dKUF7sVdMoTzgvjpSiqhSZoz4mzDkayGVuTKkwFO2CvVmx2IIBbPyF/IJ\nXcurq084jrIaFiV2vV/u+LpMYXDqDek5Zex3IXJSv+9EYcS5sMlF/fd1aS4rxCCy\nCTxWw/nYeW5v/fWDu4AwyiDanb7MDkx9PSinMTSDuS02uiovLd+sYNN8+eH0SoV/\nRxUuyccbAgMBAAECggEAHrgcaqO8AHaa0SPm/PVAwVrKtqnPRPdE8WgmK5d097a8\nxoOtWW0VO9QSjqb1UXbvdxMybTzOqnPzpcSt7alJqs6BR8TGAWRZrmuhP6pdFgwX\n7iCOkEBYsZ0GILtVpxWc/Dli7Cq9okpxvehpB/DL5YWC3jCt7VyEj8YcgTW7TdnJ\npYEhYyDa84cXuje5BPDvcPnIYaWlOAryZF5Z4+AESv7P9+CYZStYolxWZApgT2ca\nfhVf1Fg6skcxANKSeI6QLJuCV8LPJI2ndeN+tAhMjAFISe97liBvapMdLBCdnWpR\nNcVRQoY9vu5U4s0yo6eRsGe4g7Emv0jbm06h7ty2AQKBgQDbE5vrsnE1z4XBPqvW\nLOoWsbjs6Xipz6X3ismaFuSxZUBjzcK1G4nfs2At57uRN5cfkeHJAsUscO1VqKyL\nS+AzV26aXDq3iGXnbSgy94f1fvpkPCJGdLsMYv2xXm94nzPBgYbeaYUUnDWnS8KD\nGdF4WTmsBQKdau6/1iBE63ytAQKBgQC9bp40BM6RqhVHsOstBqU4ylh+fVorBQa3\nk4cOuAwvEYP2t6t5TrGuP5MsY1AX734GdebrqMzXxkkE7BbIR0RGTFEsbJS1cLQ+\nbo+EsTGoM11Z6SjEkQ1oOAevItiMghJUufwwpGElwUtqrz+F61NY4A8URNSbdHwt\nzBDqvbuIGwKBgHMzBoSUWs+vBmitqfJ/v8CbR+DcjGTPGjjnNEfgzfUyhv90TXSq\nvH9zdZnuB0W/c6pYLeBjoodSAptOjRzak1SsHy7wXLfx85QUZFUYsNe5I7XdoTBn\nZYyH6VuBiyBkpvSURfVii2ZhFh2Yyvnhc7LTSG5aXBunBVC/KkzTf8YBAoGAfkRR\np5LcrjOU46iF2gln8CbQPeAITkyXYZ4wlBsR4/3k3HspDT7rKJ6v1xKLvKiidGP6\nfHKTt/Avk9xagz0dwU31fYsSxK5PNp4zg9soolk6jEfiKMQXD7TpSlALz/yTg25F\nL5ciOixRvNb7nKRzdfZDltsabFSEwXIYhJ/bdKkCgYEA0K354m2Z1lbZ8AC60Ner\nZs2DsnnABaGu7TJM3WaMsaqKVqX+ujpAxeP1OhX3X31+q3hW7LtsLnk+YV8y/m9a\nAk4+pXkmPIJ9EPYBC78TW6kkADwlzu2ghPwAslys/NGGrstQf/bei3Lh2sXD8Aju\nk07DuGdlFo9h8rsctQ+7xq8=\n-----END PRIVATE KEY-----\n",
+  "client_email": "sre-challenger@sre-challenger.iam.gserviceaccount.com",
+  "client_id": "116824540354074449456",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/sre-challenger%40sre-challenger.iam.gserviceaccount.com"
+}

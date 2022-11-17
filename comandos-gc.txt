@@ -4,5 +4,15 @@ gcloud run deploy sre-challenge-gc --image gcr.io/sre-challenger/sre-challenge-g
 -- ejecuta el deply en gcloud
 --ejecuta deploy github 2
 
+gcloud container clusters get-credentials ${var.cluster_name} --zone us-west1-a --project sre-challenger
 
+DOCKER_REGISTRY_SERVER=docker.io
+DOCKER_USER=flakor
+DOCKER_EMAIL=pablo.ortiz.barra@gmail.com
+DOCKER_PASSWORD=Emt.532%2022
 
+kubectl create secret docker-registry myregistrykey \
+  --docker-server=$DOCKER_REGISTRY_SERVER \
+  --docker-username=$DOCKER_USER \
+  --docker-password=$DOCKER_PASSWORD \
+  --docker-email=$DOCKER_EMAIL
