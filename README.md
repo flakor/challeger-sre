@@ -48,7 +48,40 @@ models_path = 'pickle_model.pkl'
     "array":[0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,0,1,0,0,1,0,0,0,0]
 }
  ```
- ![alt text](https://github.com/[username]/[reponame]/blob/[branch]/image.jpg?raw=true)
+ Los headers necesarios.
+ ![alt text](https://github.com/flakor/challeger-sre/blob/master/blob/headers.jpg?raw=true)
+ 
+ ## Prueba en localhost
+ Iniciar servidor.
+ 
+ ```console
+ chkdsk@DESKTOP-7O6LBAG:~/challenge$ python3 server.py
+ * Serving Flask app "server" (lazy loading)
+ * Environment: production
+   WARNING: This is a development server. Do not use it in a production deployment.
+   Use a production WSGI server instead.
+ * Debug mode: on
+ * Running on http://0.0.0.0:5000/ (Press CTRL+C to quit)
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 143-070-844
+  ```
+  pruebas con curl.
+  ```console
+  chkdsk@DESKTOP-7O6LBAG:~$ curl --location --request POST 'http://localhost:5000/api' --header 'Content-Type: application/json' --data-raw '{
+    "array":[0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0,0]
+}'
+{
+  "predicciones": [
+    1
+  ]
+}
+ ```
+ pruebas postman.
+ 
+ ![alt text](https://github.com/flakor/challeger-sre/blob/master/blob/postman.jpg?raw=true)
+ 
+ 
 2. Automatizar el proceso de construcción y despliegue de la API, utilizando uno o varios servicios cloud.
 3. Hacer pruebas de estrés a la API con el modelo expuesto con al menos 50.000 requests durante 45
 segundos. Para esto debes utilizar esta herramienta y presentar las métricas obtenidas.
