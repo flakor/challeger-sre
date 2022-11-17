@@ -39,6 +39,16 @@ a. Puedes usar el modelo ya serializado (pickle_model.pkl) o volver a generarlo.
 models_path = 'pickle_model.pkl'
 #carga el modelo
 ```
+
+ El endpoint que por request del tipo POST recibe un vector
+ con el siguiente formato.
+ ```json
+ 
+ {
+    "array":[0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,0,1,0,0,1,0,0,0,0]
+}
+ ```
+ ![alt text](https://github.com/[username]/[reponame]/blob/[branch]/image.jpg?raw=true)
 2. Automatizar el proceso de construcción y despliegue de la API, utilizando uno o varios servicios cloud.
 3. Hacer pruebas de estrés a la API con el modelo expuesto con al menos 50.000 requests durante 45
 segundos. Para esto debes utilizar esta herramienta y presentar las métricas obtenidas.
