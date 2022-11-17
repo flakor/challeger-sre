@@ -66,7 +66,7 @@ models_path = 'pickle_model.pkl'
  * Debugger is active!
  * Debugger PIN: 143-070-844
   ```
-  pruebas con curl.
+  Pruebas con curl.
   ```console
   chkdsk@DESKTOP-7O6LBAG:~$ curl --location --request POST 'http://localhost:5000/api' --header 'Content-Type: application/json' --data-raw '{
     "array":[0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0,0]
@@ -77,12 +77,56 @@ models_path = 'pickle_model.pkl'
   ]
 }
  ```
- pruebas postman.
+ Pruebas postman.
  
  ![alt text](https://github.com/flakor/challeger-sre/blob/master/blob/postman.jpg?raw=true)
  
  
-2. Automatizar el proceso de construcción y despliegue de la API, utilizando uno o varios servicios cloud.
+# 2. Automatizar el proceso de construcción y despliegue de la API, utilizando uno o varios servicios cloud.
+
+Para automatizar lo primero que se debe realizar es dockerificar la app
+
+ ```yaml
+ # Base de sistemas en el cual se carga el script
+FROM python:3.8-slim-buster
+# indica el directorio de trabajo
+WORKDIR /challenge
+#copia el archivo de dependencias
+COPY requirements.txt requirements.txt
+#instala las dependecias
+RUN pip3 install -r requirements.txt
+#copia los archivos locales en el docker.
+COPY . . 
+# Ejecuta python server.py
+
+CMD [ "python" , "server.py" ]
+
+# Exponer el puerto 5000 de la api
+EXPOSE 5000
+ 
+  ```
+ Con este proceso la app "se empaqueta en un contenedor" que es compatible con cualquier sistema que pueda ejecutar docker.
+ 
+ El siguiente paso es hacer en build y tagiar la app.
+ Ademas voy a subir la imagen a dockerhub para utilizar esta para el proceso de kubernetes.
+ lo comandos son:
+ ```console
+ sudo docker build --tag=sre-challenge .
+ docker tag sre-challenge flakor/challenger:v1
+ docker push flakor/challenger:v1
+ ```
+ Tener en consideracion las variables de entorno para docker login ademas de crear el repositorio antes de este proceso.
+ ```console
+ DOCKER_REGISTRY_SERVER=docker.io
+ DOCKER_USER=pepe
+ DOCKER_EMAIL=prueba@gmail.com
+ DOCKER_PASSWORD=1234
+ ```
+ 
+ 
+ 
+  
+
 3. Hacer pruebas de estrés a la API con el modelo expuesto con al menos 50.000 requests durante 45
 segundos. Para esto debes utilizar esta herramienta y presentar las métricas obtenidas.
 a. ¿Cómo podrías mejorar el performance de las pruebas anteriores?
